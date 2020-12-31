@@ -16,7 +16,12 @@ namespace RezaB.Files.FTP.SFTP
         {
             get
             {
-                return string.Join("/", navigationList);
+                var path = string.Join("/", navigationList.Reverse());
+                if (!string.IsNullOrEmpty(path))
+                    path += "/";
+                if (!string.IsNullOrEmpty(_root))
+                    path = _root + path;
+                return path;
             }
         }
 
@@ -25,7 +30,7 @@ namespace RezaB.Files.FTP.SFTP
             var hostAndRoot = url.ToLower().StartsWith("sftp://") ? url.Substring(7) : url;
             var parts = hostAndRoot.Split('/');
             _host = parts.FirstOrDefault();
-            _root = parts.Count() > 1 ? $"/{string.Join("/", parts.Skip(1))}/" : "/";
+            _root = parts.Count() > 1 ? $"{string.Join("/", parts.Skip(1))}/" : string.Empty;
         }
 
         public override FileManagerResult<bool> CreateDirectory(string directoryPath)
@@ -35,7 +40,7 @@ namespace RezaB.Files.FTP.SFTP
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    client.CreateDirectory(CurrentPath + directoryPath);
+                    client.CreateDirectory($"{_subrootPath}{directoryPath}");
                     client.Disconnect();
                 }
                 return new FileManagerResult<bool>(true);
@@ -52,12 +57,16 @@ namespace RezaB.Files.FTP.SFTP
             {
                 return new FileManagerResult<bool>(false);
             }
+            if (string.IsNullOrEmpty(directoryPath))
+            {
+                return new FileManagerResult<bool>(true);
+            }
             try
             {
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    client.ChangeDirectory(CurrentPath + directoryPath);
+                    client.ChangeDirectory($"{_subrootPath}{directoryPath}");
                     client.Disconnect();
                 }
                 return new FileManagerResult<bool>(true);
@@ -75,7 +84,7 @@ namespace RezaB.Files.FTP.SFTP
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    client.GetAttributes(CurrentPath + fileName);
+                    client.GetAttributes($"{_subrootPath}{fileName}");
                     client.Disconnect();
                 }
                 return new FileManagerResult<bool>(true);
@@ -93,7 +102,7 @@ namespace RezaB.Files.FTP.SFTP
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    var list = client.ListDirectory(CurrentPath);
+                    var list = client.ListDirectory(_subrootPath);
                     client.Disconnect();
 
                     return new FileManagerResult<IEnumerable<string>>(list.Where(item => item.IsDirectory && item.Name != ".." && item.Name != ".").Select(item => item.Name).ToArray());
@@ -113,7 +122,7 @@ namespace RezaB.Files.FTP.SFTP
                 {
                     client.Connect();
                     Stream output = new MemoryStream();
-                    client.DownloadFile(CurrentPath + fileName, output);
+                    client.DownloadFile($"{_subrootPath}{fileName}", output);
                     output.Seek(0, SeekOrigin.Begin);
                     client.Disconnect();
 
@@ -133,7 +142,7 @@ namespace RezaB.Files.FTP.SFTP
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    var list = client.ListDirectory(CurrentPath);
+                    var list = client.ListDirectory(_subrootPath);
                     client.Disconnect();
 
                     return new FileManagerResult<IEnumerable<string>>(list.Where(item => !item.IsDirectory && item.Name != ".." && item.Name != ".").Select(item => item.Name).ToArray());
@@ -161,7 +170,7 @@ namespace RezaB.Files.FTP.SFTP
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    client.DeleteFile(CurrentPath + fileName);
+                    client.DeleteFile($"{_subrootPath}{fileName}");
                     client.Disconnect();
 
                     return new FileManagerResult<bool>(true);
@@ -183,7 +192,7 @@ namespace RezaB.Files.FTP.SFTP
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    client.UploadFile(fileContents, CurrentPath + fileName, forceOverwrite);
+                    client.UploadFile(fileContents, $"{_subrootPath}{fileName}", forceOverwrite);
                     client.Disconnect();
 
                     return new FileManagerResult<bool>(true);
@@ -263,7 +272,7 @@ namespace RezaB.Files.FTP.SFTP
                     else
                     {
                         client.Connect();
-                        client.DeleteDirectory(CurrentPath + directoryPath);
+                        client.DeleteDirectory($"{_subrootPath}{directoryPath}");
                         client.Disconnect();
                     }
 
