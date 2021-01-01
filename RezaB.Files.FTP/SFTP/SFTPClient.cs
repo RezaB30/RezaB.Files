@@ -16,9 +16,9 @@ namespace RezaB.Files.FTP.SFTP
         {
             get
             {
-                var path = string.Join("/", navigationList.Reverse());
+                var path = string.Join(PathSeparator, navigationList.Reverse());
                 if (!string.IsNullOrEmpty(path))
-                    path += "/";
+                    path += PathSeparator;
                 if (!string.IsNullOrEmpty(_root))
                     path = _root + path;
                 return path;
@@ -28,9 +28,9 @@ namespace RezaB.Files.FTP.SFTP
         internal SFTPClient(string url, string username, string password) : base(url, username, password)
         {
             var hostAndRoot = url.ToLower().StartsWith("sftp://") ? url.Substring(7) : url;
-            var parts = hostAndRoot.Split('/');
+            var parts = hostAndRoot.Split(new[] { PathSeparator }, StringSplitOptions.None);
             _host = parts.FirstOrDefault();
-            _root = parts.Count() > 1 ? $"{string.Join("/", parts.Skip(1))}/" : string.Empty;
+            _root = parts.Count() > 1 ? $"{string.Join(PathSeparator, parts.Skip(1))}{PathSeparator}" : string.Empty;
         }
 
         public override FileManagerResult<bool> CreateDirectory(string directoryPath)

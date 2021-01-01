@@ -2,18 +2,18 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <title>RezaB.Files.Local</title>
     <authors>Reza Barzegaran</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <description>Local File Management.</description>
-    <releaseNotes>First release.</releaseNotes>
+    <releaseNotes>Added separator.</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>File Management Local Files</tags>
 	<repository type="git" url="https://github.com/masteriss/RezaB.Files" branch="master" />
 	<dependencies>
-		<dependency id="RezaB.Files" version="1.0.0"/>
+		<dependency id="RezaB.Files" version="1.0.1"/>
 	</dependencies>
   </metadata>
 </package>

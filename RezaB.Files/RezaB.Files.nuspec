@@ -2,13 +2,13 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <title>RezaB.Files</title>
     <authors>Reza Barzegaran</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <description>Base classes and interfaces for managing file.</description>
-    <releaseNotes>First release.</releaseNotes>
+    <releaseNotes>Added separator.</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>File Management Base Files</tags>
 	<repository type="git" url="https://github.com/masteriss/RezaB.Files" branch="master" />

@@ -68,10 +68,7 @@ namespace RezaB.Files.TestUnit
         {
             FolderStructureTreeview.Nodes.Clear();
             InternalFileManager = GetFileManager();
-            if (FileManagerTypeCombobox.SelectedItem as string == "Local")
-                FolderStructureTreeview.PathSeparator = "\\";
-            else
-                FolderStructureTreeview.PathSeparator = "/";
+            FolderStructureTreeview.PathSeparator = InternalFileManager.PathSeparator;
             var list = GetDirectoryAndFileList();
             if (list != null)
             {

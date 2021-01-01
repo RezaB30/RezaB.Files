@@ -16,20 +16,30 @@ namespace RezaB.Files.FTP
         protected readonly string _username;
         protected readonly string _password;
         protected readonly Stack<string> navigationList;
+
         internal FTPClientBase(string url, string username, string password)
         {
-            if (url.LastOrDefault() == '/')
-                url = url.Remove(url.Length -1);
+            if (url.EndsWith(PathSeparator))
+                url = url.Remove(url.Length - PathSeparator.Length);
             _url = url;
             _username = username;
             _password = password;
             navigationList = new Stack<string>();
         }
+
         public string CurrentPath
         {
             get
             {
-                return $"{string.Join("/", new[] { _url }.Concat(navigationList.Reverse()))}/";
+                return $"{string.Join(PathSeparator, new[] { _url }.Concat(navigationList.Reverse()))}{PathSeparator}";
+            }
+        }
+
+        public string PathSeparator
+        {
+            get
+            {
+                return "/";
             }
         }
 
@@ -65,7 +75,7 @@ namespace RezaB.Files.FTP
             var results = DirectoryExists(directoryPath);
             if (!results.Result)
                 return results;
-            var collection = directoryPath.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            var collection = directoryPath.Split(new[] { PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var item in collection)
             {
                 navigationList.Push(item);

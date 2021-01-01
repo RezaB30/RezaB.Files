@@ -16,14 +16,22 @@ namespace RezaB.Files.Local
         {
             get
             {
-                return $"{string.Join("\\", new[] { _rootPath }.Concat(navigationList.Reverse()))}\\";
+                return $"{string.Join(PathSeparator, new[] { _rootPath }.Concat(navigationList.Reverse()))}{PathSeparator}";
+            }
+        }
+
+        public string PathSeparator
+        {
+            get
+            {
+                return "\\";
             }
         }
 
         public LocalFileManager(string rootPath)
         {
-            if (rootPath.LastOrDefault() == '\\')
-                rootPath = rootPath.Remove(rootPath.Length - 1);
+            if (rootPath.EndsWith(PathSeparator))
+                rootPath = rootPath.Remove(rootPath.Length - PathSeparator.Length);
             _rootPath = rootPath;
             navigationList = new Stack<string>();
         }
@@ -59,7 +67,7 @@ namespace RezaB.Files.Local
             var results = DirectoryExists(directoryPath);
             if (!results.Result)
                 return results;
-            var collection = directoryPath.Split(new[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+            var collection = directoryPath.Split(new[] { PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var item in collection)
             {
                 navigationList.Push(item);

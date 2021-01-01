@@ -17,6 +17,10 @@ namespace RezaB.Files
         /// Gets the current path.
         /// </summary>
         string CurrentPath { get; }
+        /// <summary>
+        /// Gets the path separator.
+        /// </summary>
+        string PathSeparator { get; }
         #endregion
         #region Navigation
         /// <summary>
