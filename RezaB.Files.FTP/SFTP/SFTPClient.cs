@@ -37,10 +37,24 @@ namespace RezaB.Files.FTP.SFTP
         {
             try
             {
+                var parts = directoryPath.Split(new[] { PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                var createdPath = new List<string>();
                 using (var client = CreateClient())
                 {
                     client.Connect();
-                    client.CreateDirectory($"{_subrootPath}{directoryPath}");
+                    foreach (var item in parts)
+                    {
+                        createdPath.Add(item);
+                        try
+                        {
+                            client.ChangeDirectory($"{_subrootPath}{string.Join(PathSeparator, createdPath)}");
+                            client.ChangeDirectory(string.Empty);
+                        }
+                        catch (Renci.SshNet.Common.SftpPathNotFoundException ex)
+                        {
+                            client.CreateDirectory($"{_subrootPath}{string.Join(PathSeparator, createdPath)}");
+                        }
+                    }
                     client.Disconnect();
                 }
                 return new FileManagerResult<bool>(true);
